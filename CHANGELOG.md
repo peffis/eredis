@@ -4,7 +4,8 @@
 
 June 2021.
 
-* Add support for named connection processes.
+* Support for named connection processes.
+* Support AUTH with username.
 
 ## v1.3.3
 
