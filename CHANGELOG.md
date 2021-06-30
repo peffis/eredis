@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.4.1
+
+June 2021.
+
+* Restore support for rebar 2.
+* Optimize parser.
+
 ## v1.4.0
 
 June 2021.
