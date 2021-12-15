@@ -1,6 +1,7 @@
 %% Public types
 
 -type reconnect_sleep() :: no_reconnect | integer().
+-type registered_name() :: {local, atom()} | {global, term()} | {via, atom(), term()}.
 
 -type option() :: {host, string() | {local, string()}} |
                   {port, inet:port_number()} |
@@ -9,7 +10,8 @@
                   {reconnect_sleep, reconnect_sleep()} |
                   {connect_timeout, integer()} |
                   {socket_options, list()} |
-                  {tls, [ssl:tls_client_option()]}.
+                  {tls, [ssl:tls_client_option()]} |
+                  {name, registered_name()}.
 
 -type options() :: [option()].
 -type server_args() :: options().               % for backwards compatibility
@@ -23,8 +25,14 @@
 %% Continuation data is whatever data returned by any of the parse
 %% functions. This is used to continue where we left off the next time
 %% the user calls parse/2.
--type continuation_data() :: any().
--type parser_state() :: status_continue | bulk_continue | multibulk_continue | error_continue.
+-type continuation_data() ::
+        start |
+        {status_continue, Acc :: binary()} |
+        {error_continue, Acc :: binary()} |
+        {bulk_size, Acc :: binary()} |
+        {multibulk_size, Acc :: binary()} |
+        {bulk_continue, BytesLeft :: integer(), Acc :: binary()} |
+        {multibulk_continue, NumLeft :: integer(), Acc :: list()}.
 
 %% Internal types
 -ifdef(OTP_RELEASE). % OTP >= 21
@@ -40,8 +48,7 @@
 %% Internal parser state. Is returned from parse/2 and must be
 %% included on the next calls to parse/2.
 -record(pstate, {
-          state = undefined :: parser_state() | undefined,
-          continuation_data :: continuation_data() | undefined
+          states = [] :: [continuation_data()]
 }).
 
 -define(NL, "\r\n").

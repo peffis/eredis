@@ -18,7 +18,7 @@
 -export([q/2, q/3, qp/2, qp/3, q_noreply/2, q_async/2, q_async/3]).
 -export_type([options/0]).
 
-%% Exported for eredis_sub_client and testing
+%% Exported for eredis_client, eredis_sub_client and testing
 -export([create_multibulk/1]).
 
 %% Type of gen_server process id
@@ -49,8 +49,8 @@ start_link() ->
 %% <dt>`{port, Port}'</dt><dd>Integer, default is 6379</dd>
 %% <dt>`{database, Database}'</dt><dd>Integer (or string containing a number);
 %% 0 for default database</dd>
-%% <dt>`{password, Password}'</dt><dd>String or empty string for no password;
-%% default: `""' i.e. no password</dd>
+%% <dt>`{username, Username}'</dt><dd>String; default: no username</dd>
+%% <dt>`{password, Password}'</dt><dd>String; default: no password</dd>
 %% <dt>`{reconnect_sleep, ReconnectSleep}'</dt><dd>Integer of milliseconds to
 %% sleep between reconnect attempts; default: 100</dd>
 %% <dt>`{connect_timeout, Timeout}'</dt><dd>Timeout value in milliseconds to use
@@ -61,6 +61,10 @@ start_link() ->
 %% <dt>`{tls, TlsOpts}'</dt><dd>Enabling TLS and a list of
 %% <a href="https://erlang.org/doc/man/ssl.html">ssl options</a>; used when
 %% establishing a TLS connection; default is off</dd>
+%% <dt>`{name, Name}'</dt><dd>Tuple to register the client with a name
+%% such as `{local, atom()}'; for all options see `ServerName' at
+%% <a href="https://erlang.org/doc/man/gen_server.html#start_link-4">gen_server:start_link/4</a>;
+%% default: no name</dd>
 %% </dl>
 -spec start_link(options()) -> {ok, pid()} | {error, Reason::term()}.
 start_link(Options) ->
